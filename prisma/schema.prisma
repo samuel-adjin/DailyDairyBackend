@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Diary {
+model Dairy {
   id         String   @id @default(uuid())
   title      String
   body       String
