@@ -12,7 +12,7 @@ const createDairy = async (req: Request, res: Response, next: NextFunction) => {
         const { title, body } = req.body;
         const today = new Date;
         const currentDate = new Date(`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`)
-        const dairy = await prisma.post.create({
+        const dairy = await prisma.diary.create({
             data: {
                 title,
                 body,
@@ -31,7 +31,7 @@ const editDairy = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { title, body } = req.body;
         const { id } = req.params;
-        const foundDairy = await prisma.post.findUnique({
+        const foundDairy = await prisma.diary.findUnique({
             where: {
                 id
             }
@@ -39,7 +39,7 @@ const editDairy = async (req: Request, res: Response, next: NextFunction) => {
         if (!foundDairy) {
             throw new notFound(Constant.NOT_FOUND);
         }
-        const updatedDairy = await prisma.post.update({
+        const updatedDairy = await prisma.diary.update({
             where: {
                 id
             },
@@ -58,7 +58,7 @@ const editDairy = async (req: Request, res: Response, next: NextFunction) => {
 const deleteDairy = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
-        const foundDairy = await prisma.post.findUnique({
+        const foundDairy = await prisma.diary.findUnique({
             where: {
                 id
             }
@@ -66,7 +66,7 @@ const deleteDairy = async (req: Request, res: Response, next: NextFunction) => {
         if (!foundDairy) {
             throw new notFound(Constant.NOT_FOUND);
         }
-        await prisma.post.delete({
+        await prisma.diary.delete({
             where: { id }
         })
         res.status(StatusCodes.NO_CONTENT)
@@ -83,7 +83,7 @@ const fetchPreviousDairiesPaginated = async (req: Request, res: Response, next: 
         let offset: number = Math.abs((pageNumber - 1) * perPage);
         const today = new Date();
         const currentDate = new Date(`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`)
-        const previousDiaries = await prisma.post.findMany({
+        const previousDiaries = await prisma.diary.findMany({
             where: {
                 date: {
                     lt: currentDate
@@ -95,7 +95,7 @@ const fetchPreviousDairiesPaginated = async (req: Request, res: Response, next: 
             skip: offset,
             take: perPage,
         });
-        const arraySize: number = await prisma.post.count({
+        const arraySize: number = await prisma.diary.count({
             where: {
                 date: {
                     lt: currentDate
@@ -129,7 +129,7 @@ const fetchTodayDairiesPaginated = async (req: Request, res: Response, next: Nex
         let offset: number = Math.abs((pageNumber - 1) * perPage);
         const today = new Date;
         const currentDate = new Date(`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`)
-        const diaries = await prisma.post.findMany({
+        const diaries = await prisma.diary.findMany({
             where: {
                 date: currentDate
             },
@@ -140,7 +140,7 @@ const fetchTodayDairiesPaginated = async (req: Request, res: Response, next: Nex
             take: perPage,
         })
 
-        const arraySize: number = await prisma.post.count({
+        const arraySize: number = await prisma.diary.count({
             where: {
                 date: currentDate
             }
@@ -167,14 +167,14 @@ const fetchTodayDairiesPaginated = async (req: Request, res: Response, next: Nex
 const voteDairyUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
-        const foundDairy = await prisma.post.findUnique({
+        const foundDairy = await prisma.diary.findUnique({
             where: { id }
         })
         if (!foundDairy) {
             throw new notFound(Constant.NOT_FOUND);
         }
         const newVoteUp = (foundDairy?.voteUp ?? 0) + 1;
-        const updateDairy = await prisma.post.update({
+        const updateDairy = await prisma.diary.update({
             where: {
                 id
             },
@@ -193,14 +193,14 @@ const voteDairyUp = async (req: Request, res: Response, next: NextFunction) => {
 const voteDairyDown = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
-        const foundDairy = await prisma.post.findUnique({
+        const foundDairy = await prisma.diary.findUnique({
             where: { id }
         })
         if (!foundDairy) {
             throw new notFound(Constant.NOT_FOUND);
         }
         const newVoteDown = (foundDairy?.voteDown ?? 0) + 1;
-        const updateDairy = await prisma.post.update({
+        const updateDairy = await prisma.diary.update({
             where: {
                 id
             },
@@ -219,7 +219,7 @@ const voteDairyDown = async (req: Request, res: Response, next: NextFunction) =>
 const findDairy = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
-        const dairy = await prisma.post.findUnique({ where: { id } })
+        const dairy = await prisma.diary.findUnique({ where: { id } })
         if (!dairy) {
             throw new notFound(Constant.NOT_FOUND);
         }
@@ -235,7 +235,7 @@ const fetchTodayDairies = async (req: Request, res: Response, next: NextFunction
 
         const today = new Date;
         const currentDate = new Date(`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`)
-        const diaries = await prisma.post.findMany({
+        const diaries = await prisma.diary.findMany({
             where: {
                 date: currentDate
             },
@@ -255,7 +255,7 @@ const fetchPreviousDairies = async (req: Request, res: Response, next: NextFunct
     try {
         const today = new Date();
         const currentDate = new Date(`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`)
-        const previousDiaries = await prisma.post.findMany({
+        const previousDiaries = await prisma.diary.findMany({
             where: {
                 date: {
                     lt: currentDate
